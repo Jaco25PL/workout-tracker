@@ -1,0 +1,29 @@
+:root {
+  --bg: #0f0f0f;
+  --surface: #1a1a1a;
+  --surface2: #242424;
+  --border: #2a2a2a;
+  --text: #f0f0f0;
+  --text-dim: #888;
+  --text-dimmer: #555;
+  --accent: oklch(0.72 0.2 340);
+  --accent-dim: oklch(0.72 0.2 340 / 0.15);
+  --green: oklch(0.72 0.18 145);
+  --red: oklch(0.68 0.22 25);
+  --red-dim: oklch(0.68 0.22 25 / 0.14);
+}
+
+body.light {
+  --bg: #fce8f3;
+  --surface: #fff0f8;
+  --surface2: #fad5eb;
+  --border: #f0b8d8;
+  --text: #2a0a1a;
+  --text-dim: #a0607a;
+  --text-dimmer: #d090b0;
+  --accent: oklch(0.55 0.25 340);
+  --accent-dim: oklch(0.55 0.25 340 / 0.14);
+  --green: oklch(0.52 0.18 145);
+  --red: oklch(0.52 0.25 25);
+  --red-dim: oklch(0.52 0.25 25 / 0.12);
+}
