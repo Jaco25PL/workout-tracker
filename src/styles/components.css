@@ -146,6 +146,16 @@ body.light .exercise-card.skipped { box-shadow: 0 0 0 1px oklch(0.52 0.25 25 / 0
 .modal-btn:hover { opacity: 0.88; }
 .modal-close { position: absolute; top: 16px; right: 20px; width: 28px; height: 28px; border-radius: 50%; background: var(--surface2); border: none; color: var(--text-dim); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
+/* Google OAuth button */
+.google-btn { width: 100%; padding: 14px; border-radius: 14px; background: var(--surface2); border: 1px solid var(--border); color: var(--text); font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-family: inherit; transition: background 0.15s, border-color 0.15s; }
+.google-btn:hover { background: var(--border); border-color: var(--text-dimmer); }
+.google-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* Divider row */
+.modal-divider-row { display: flex; align-items: center; gap: 12px; margin: 20px 0; }
+.modal-divider-line { flex: 1; height: 1px; background: var(--border); }
+.modal-divider-text { font-size: 12px; font-weight: 600; color: var(--text-dimmer); text-transform: uppercase; letter-spacing: 0.05em; }
+
 /* Auth modal tabs */
 .modal-tabs { display: flex; gap: 0; background: var(--surface2); border-radius: 12px; padding: 4px; margin-bottom: 24px; }
 .modal-tab { flex: 1; padding: 9px; border-radius: 9px; border: none; background: transparent; color: var(--text-dim); font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.15s; font-family: inherit; }

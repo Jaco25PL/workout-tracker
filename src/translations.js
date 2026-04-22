@@ -35,6 +35,8 @@ export const T = {
     exported: 'Exported', imported: 'Imported', importFailed: 'Import failed',
     saved: 'Saved', prUpdated: 'PR updated', loggedOut: 'Logged out',
     skipTitle: 'Skip exercise', unskipTitle: 'Unskip exercise',
+    continueWithGoogle: 'Continue with Google',
+    orDivider: 'or',
     loading: 'Loading...',
   },
   es: {
@@ -73,6 +75,8 @@ export const T = {
     exported: 'Exportado', imported: 'Importado', importFailed: 'Error al importar',
     saved: 'Guardado', prUpdated: 'PR actualizado', loggedOut: 'Sesi\u00f3n cerrada',
     skipTitle: 'Omitir ejercicio', unskipTitle: 'Restaurar ejercicio',
+    continueWithGoogle: 'Continuar con Google',
+    orDivider: 'o',
     loading: 'Cargando...',
   }
 };

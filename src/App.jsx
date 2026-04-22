@@ -49,7 +49,8 @@ export default function App() {
       if (session?.user) {
         syncFromCloud(session.user.id);
         if (event === 'SIGNED_IN') {
-          const name = session.user.user_metadata?.name || session.user.email.split('@')[0];
+          setLoginOpen(false);
+          const name = session.user.user_metadata?.name || session.user.user_metadata?.full_name || session.user.email.split('@')[0];
           showToast(T[localStorage.getItem('wt_lang') || 'en'].welcomeMsg(name));
         }
         if (event === 'PASSWORD_RECOVERY') {
