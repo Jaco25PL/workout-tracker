@@ -3,6 +3,7 @@ import { uid } from './utils/uid';
 import { loadData, saveData, pullData, pushData } from './utils/storage';
 import { supabase } from './utils/supabase';
 import { exportCSV, importCSV } from './utils/csv';
+import { T } from './translations';
 import Header from './components/Header';
 import DaySelector from './components/DaySelector';
 import RestBanner from './components/RestBanner';
@@ -12,12 +13,15 @@ import MenuDrawer from './components/MenuDrawer';
 import LoginModal from './components/LoginModal';
 import LinkModal from './components/LinkModal';
 import Toast from './components/Toast';
+import CatPopup from './components/CatPopup';
 
 export default function App() {
   const today = new Date().getDay();
   const [data, setData] = useState(loadData);
   const [curDay, setCurDay] = useState(today);
   const [dark, setDark] = useState(() => localStorage.getItem('wt_dark') !== 'false');
+  const [lang, setLang] = useState(() => localStorage.getItem('wt_lang') || 'en');
+  const t = T[lang];
   const [menuOpen, setMenuOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [editData, setEditData] = useState(null);
@@ -26,9 +30,11 @@ export default function App() {
   const [user, setUser] = useState(null);
   const [toast, setToast] = useState('');
   const [toastVis, setToastVis] = useState(false);
+  const [catAnim, setCatAnim] = useState(null);
   const fileRef = useRef();
   const toastTmr = useRef();
   const syncTmr = useRef();
+  const catTimer = useRef();
 
   // Auth state listener
   useEffect(() => {
@@ -52,7 +58,8 @@ export default function App() {
         saveData(cloud);
       } else {
         // First login — push local data to cloud
-        await pushData(userId, data);
+        const local = loadData();
+        await pushData(userId, local);
       }
     } catch (e) { console.error('Sync pull failed:', e); }
   }
@@ -71,6 +78,7 @@ export default function App() {
   }, []);
 
   useEffect(() => { document.body.classList.toggle('light', !dark); localStorage.setItem('wt_dark', dark); }, [dark]);
+  useEffect(() => { localStorage.setItem('wt_lang', lang); }, [lang]);
   useEffect(() => { syncToCloud(data); }, [data, syncToCloud]);
 
   function showToast(msg) {
@@ -80,10 +88,17 @@ export default function App() {
     toastTmr.current = setTimeout(() => setToastVis(false), 2200);
   }
 
+  function showCat(type) {
+    if (dark) return; // pink mode only
+    clearTimeout(catTimer.current);
+    setCatAnim({ type, key: Math.floor(Math.random() * 5) });
+    catTimer.current = setTimeout(() => setCatAnim(null), 1600);
+  }
+
   // Edit mode
   function openEdit() { setEditData(JSON.parse(JSON.stringify(data))); setEditMode(true); setMenuOpen(false); }
   function cancelEdit() { setEditMode(false); setEditData(null); }
-  function saveEdit() { setData(editData); setEditMode(false); setEditData(null); showToast('Saved'); }
+  function saveEdit() { setData(editData); setEditMode(false); setEditData(null); showToast(t.saved); }
 
   const viewData = editMode ? editData : data;
   const viewDay = viewData.days[curDay];
@@ -108,6 +123,7 @@ export default function App() {
       }
       return n;
     });
+    showCat(delta > 0 ? 'happy' : 'sad');
   }
 
   function resetPR(exIdx) {
@@ -117,7 +133,18 @@ export default function App() {
       ex.pr = ex.sets.map(s => s.reps);
       return n;
     });
-    showToast('PR reset');
+    showToast(t.prUpdated);
+  }
+
+  function resetSetPR(exIdx, si) {
+    setData(prev => {
+      const n = JSON.parse(JSON.stringify(prev));
+      const ex = n.days[curDay].exercises[exIdx];
+      if (!ex.pr) ex.pr = [];
+      ex.pr[si] = ex.sets[si].reps;
+      return n;
+    });
+    showToast(t.prUpdated);
   }
 
   function toggleSkip(exIdx) {
@@ -131,7 +158,7 @@ export default function App() {
 
   function handleExport() {
     exportCSV(data);
-    showToast('Exported');
+    showToast(t.exported);
     setMenuOpen(false);
   }
 
@@ -139,8 +166,8 @@ export default function App() {
     const file = e.target.files[0];
     if (!file) return;
     importCSV(file, data)
-      .then(nd => { setData(nd); showToast('Imported'); })
-      .catch(err => { console.error(err); showToast('Import failed'); });
+      .then(nd => { setData(nd); showToast(t.imported); })
+      .catch(err => { console.error(err); showToast(t.importFailed); });
     e.target.value = '';
     setMenuOpen(false);
   }
@@ -149,7 +176,7 @@ export default function App() {
     await supabase.auth.signOut();
     setUser(null);
     setMenuOpen(false);
-    showToast('Logged out');
+    showToast(t.loggedOut);
   }
 
   return (
@@ -162,28 +189,30 @@ export default function App() {
         onMenuOpen={() => setMenuOpen(true)}
         onCancelEdit={cancelEdit}
         onSaveEdit={saveEdit}
+        t={t}
+        curDay={curDay}
       />
 
-      <DaySelector curDay={curDay} setCurDay={setCurDay} viewData={viewData} />
+      <DaySelector curDay={curDay} setCurDay={setCurDay} viewData={viewData} t={t} />
 
       {/* Rest toggle in edit */}
       {editMode && (
         <div className="rest-toggle-row">
           <div>
-            <div className="rest-toggle-label">Rest Day</div>
-            <div className="rest-toggle-sub">No exercises scheduled</div>
+            <div className="rest-toggle-label">{t.restDayToggle}</div>
+            <div className="rest-toggle-sub">{t.restDayToggleSub}</div>
           </div>
           <div className={`toggle ${editDay.isRest ? 'on' : ''}`} onClick={() => updEditDay(d => { d.isRest = !d.isRest; })} />
         </div>
       )}
 
       {/* Rest banner */}
-      {viewDay.isRest && !editMode && <RestBanner />}
+      {viewDay.isRest && !editMode && <RestBanner t={t} />}
 
       {/* Exercises */}
       {(!viewDay.isRest || editMode) && (
         <div className="exercises">
-          {viewDay.exercises.length === 0 && !editMode && <EmptyState />}
+          {viewDay.exercises.length === 0 && !editMode && <EmptyState t={t} />}
 
           {viewDay.exercises.map((ex, exIdx) => (
             <ExerciseCard
@@ -195,8 +224,10 @@ export default function App() {
               updEditDay={updEditDay}
               updateSet={updateSet}
               resetPR={resetPR}
+              resetSetPR={resetSetPR}
               toggleSkip={toggleSkip}
               onOpenLink={(idx) => setLinkModal({ exIdx: idx, value: editDay.exercises[idx].link || '' })}
+              t={t}
             />
           ))}
 
@@ -204,7 +235,7 @@ export default function App() {
             <button className="add-ex-btn" onClick={() => updEditDay(d => {
               d.exercises.push({ id: uid(), name: '', pr: [10], sets: [{ id: uid(), reps: 10, weight: 0 }] });
             })}>
-              <span style={{ fontSize: 18, lineHeight: 1 }}>+</span> Add Exercise
+              <span style={{ fontSize: 18, lineHeight: 1 }}>+</span> {t.addExercise.replace('+ ', '')}
             </button>
           )}
         </div>
@@ -215,7 +246,10 @@ export default function App() {
         onClose={() => setMenuOpen(false)}
         user={user}
         dark={dark}
+        lang={lang}
+        t={t}
         onToggleDark={() => setDark(d => !d)}
+        onToggleLang={() => setLang(l => l === 'en' ? 'es' : 'en')}
         onEdit={openEdit}
         onImport={() => fileRef.current.click()}
         onExport={handleExport}
@@ -223,7 +257,7 @@ export default function App() {
         onLogout={handleLogout}
       />
 
-      {loginOpen && <LoginModal onClose={() => setLoginOpen(false)} onToast={showToast} />}
+      {loginOpen && <LoginModal onClose={() => setLoginOpen(false)} onToast={showToast} t={t} />}
 
       {linkModal && (
         <LinkModal
@@ -237,6 +271,7 @@ export default function App() {
 
       <input type="file" ref={fileRef} accept=".csv" onChange={handleImportChange} />
       <Toast message={toast} visible={toastVis} />
+      {!dark && <CatPopup catAnim={catAnim} lang={lang} />}
     </div>
   );
 }

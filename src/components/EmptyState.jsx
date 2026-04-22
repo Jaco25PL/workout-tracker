@@ -1,9 +1,9 @@
-export default function EmptyState() {
+export default function EmptyState({ t }) {
   return (
     <div className="empty-state">
       <span className="empty-emoji">💪</span>
-      <div className="empty-title">No exercises yet</div>
-      <div className="empty-sub">Open the menu to import a CSV<br />or tap Edit to build your workout</div>
+      <div className="empty-title">{t.noExercises}</div>
+      <div className="empty-sub">{t.noExercisesSub}</div>
     </div>
   );
 }

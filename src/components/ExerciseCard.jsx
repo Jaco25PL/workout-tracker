@@ -2,14 +2,13 @@ import { uid } from '../utils/uid';
 import { fmtW } from '../utils/formatters';
 import Stepper from './Stepper';
 
-export default function ExerciseCard({ ex, exIdx, editMode, editDay, updEditDay, updateSet, resetPR, toggleSkip, onOpenLink }) {
+export default function ExerciseCard({ ex, exIdx, editMode, editDay, updEditDay, updateSet, resetPR, resetSetPR, toggleSkip, onOpenLink, t }) {
   const pr = ex.pr || [];
   const hasBelowPR = !editMode && !ex.skipped && ex.sets.some((s, si) => pr[si] !== undefined && s.reps < pr[si]);
   const isSkipped = !!ex.skipped;
 
   return (
     <div className={`exercise-card ${isSkipped ? 'skipped' : ''}`}>
-      {/* Card header row */}
       <div className="exercise-card-header">
         {editMode ? (
           <>
@@ -17,14 +16,14 @@ export default function ExerciseCard({ ex, exIdx, editMode, editDay, updEditDay,
               className="edit-input"
               value={editDay.exercises[exIdx].name}
               onChange={e => updEditDay(d => { d.exercises[exIdx].name = e.target.value; })}
-              placeholder="Exercise name"
+              placeholder={t.exerciseName}
             />
             <button
               className={`link-btn ${editDay.exercises[exIdx].link ? 'has-link' : ''}`}
               onClick={() => onOpenLink(exIdx)}
               title={editDay.exercises[exIdx].link ? 'Edit link' : 'Add link'}
             >
-              {editDay.exercises[exIdx].link ? '🔗' : '+'}
+              {editDay.exercises[exIdx].link ? '\ud83d\udd17' : '+'}
             </button>
           </>
         ) : (
@@ -42,7 +41,7 @@ export default function ExerciseCard({ ex, exIdx, editMode, editDay, updEditDay,
             <button
               className={`skip-btn ${isSkipped ? 'skipped' : ''}`}
               onClick={() => toggleSkip(exIdx)}
-              title={isSkipped ? 'Unskip exercise' : 'Skip exercise'}
+              title={isSkipped ? t.unskipTitle : t.skipTitle}
             >
               <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
                 <line x1="2" y1="11" x2="11" y2="2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
@@ -57,7 +56,7 @@ export default function ExerciseCard({ ex, exIdx, editMode, editDay, updEditDay,
       )}
 
       <div className="sets-header">
-        <span>#</span><span>Reps</span><span>Weight</span>
+        <span>#</span><span>{t.reps}</span><span>{t.weight}</span>
         {editMode && <span />}
       </div>
 
@@ -82,6 +81,7 @@ export default function ExerciseCard({ ex, exIdx, editMode, editDay, updEditDay,
               belowPR={isBelowPR}
               onDecrement={() => updateSet(exIdx, si, 'reps', -1)}
               onIncrement={() => updateSet(exIdx, si, 'reps', 1)}
+              onResetPR={isBelowPR ? () => resetSetPR(exIdx, si) : undefined}
             />
             <Stepper
               value={fmtW(s.weight)}
@@ -98,8 +98,8 @@ export default function ExerciseCard({ ex, exIdx, editMode, editDay, updEditDay,
           <button className="add-set-btn" onClick={() => updEditDay(d => {
             const last = d.exercises[exIdx].sets.slice(-1)[0];
             d.exercises[exIdx].sets.push({ id: uid(), reps: last?.reps || 10, weight: last?.weight || 0 });
-          })}>+ Add Set</button>
-          <button className="remove-ex-btn" onClick={() => updEditDay(d => { d.exercises.splice(exIdx, 1); })}>× Remove Exercise</button>
+          })}>{t.addSet}</button>
+          <button className="remove-ex-btn" onClick={() => updEditDay(d => { d.exercises.splice(exIdx, 1); })}>{t.removeExercise}</button>
         </>
       )}
     </div>

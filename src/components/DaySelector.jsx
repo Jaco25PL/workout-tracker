@@ -1,9 +1,7 @@
-import { DAYS } from '../constants';
-
-export default function DaySelector({ curDay, setCurDay, viewData }) {
+export default function DaySelector({ curDay, setCurDay, viewData, t }) {
   return (
     <div className="day-selector">
-      {DAYS.map((d, i) => (
+      {t.days.map((d, i) => (
         <button
           key={i}
           className={`day-pill ${curDay === i ? 'active' : ''} ${viewData.days[i].isRest ? 'rest' : ''}`}
