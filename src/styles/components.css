@@ -62,7 +62,7 @@ body.light .exercise-card.skipped { box-shadow: 0 0 0 1px oklch(0.52 0.25 25 / 0
 .stepper-btn { width: 32px; height: 36px; border: none; background: transparent; color: var(--text-dim); font-size: 17px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.1s, color 0.1s; flex-shrink: 0; line-height: 1; }
 .stepper-btn:hover { background: var(--border); color: var(--text); }
 .stepper-btn:active { background: var(--accent-dim); color: var(--accent); }
-.stepper-val { flex: 1; text-align: center; font-size: 14px; font-weight: 600; color: var(--text); min-width: 0; white-space: nowrap; transition: color 0.15s; }
+.stepper-val { flex: 1; text-align: center; font-size: 14px; font-weight: 600; color: var(--text); min-width: 0; white-space: nowrap; transition: color 0.15s; position: relative; }
 .stepper-val.below-pr { color: var(--red); }
 
 /* Empty state */
@@ -167,7 +167,7 @@ body.light .exercise-card.skipped { box-shadow: 0 0 0 1px oklch(0.52 0.25 25 / 0
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
 /* Per-set PR reset hint */
-.pr-reset-arrow { margin-left: 3px; font-size: inherit; color: var(--red); }
+.pr-reset-arrow { position: absolute; left: calc(50% + 12px); top: 50%; transform: translateY(-50%); font-size: inherit; color: var(--red); }
 
 /* Cat animations — pink mode only */
 .cat-popup { position: fixed; bottom: 110px; left: 50%; transform: translateX(-50%) translateY(30px); z-index: 400; pointer-events: none; opacity: 0; transition: opacity 0.2s, transform 0.2s; display: flex; flex-direction: column; align-items: center; gap: 6px; }
