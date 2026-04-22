@@ -138,16 +138,6 @@ export default function App() {
     showCat(delta > 0 ? 'happy' : 'sad');
   }
 
-  function resetPR(exIdx) {
-    setData(prev => {
-      const n = JSON.parse(JSON.stringify(prev));
-      const ex = n.days[curDay].exercises[exIdx];
-      ex.pr = ex.sets.map(s => s.reps);
-      return n;
-    });
-    showToast(t.prUpdated);
-  }
-
   function resetSetPR(exIdx, si) {
     setData(prev => {
       const n = JSON.parse(JSON.stringify(prev));
@@ -235,7 +225,6 @@ export default function App() {
               editDay={editDay}
               updEditDay={updEditDay}
               updateSet={updateSet}
-              resetPR={resetPR}
               resetSetPR={resetSetPR}
               toggleSkip={toggleSkip}
               onOpenLink={(idx) => setLinkModal({ exIdx: idx, value: editDay.exercises[idx].link || '' })}

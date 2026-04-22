@@ -5,9 +5,10 @@ export default function Stepper({ value, belowPR, onDecrement, onIncrement, onRe
       <span
         className={`stepper-val ${belowPR ? 'below-pr' : ''}`}
         onClick={onResetPR}
-        style={onResetPR ? { cursor: 'pointer', position: 'relative' } : undefined}
+        style={onResetPR ? { cursor: 'pointer' } : undefined}
       >
-        {belowPR ? <span className="pr-reset-hint">{value}</span> : value}
+        {value}
+        {onResetPR && <span className="pr-reset-arrow">↺</span>}
       </span>
       <button className="stepper-btn" onClick={onIncrement}>+</button>
     </div>

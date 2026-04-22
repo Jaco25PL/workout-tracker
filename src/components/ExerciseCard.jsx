@@ -2,9 +2,8 @@ import { uid } from '../utils/uid';
 import { fmtW } from '../utils/formatters';
 import Stepper from './Stepper';
 
-export default function ExerciseCard({ ex, exIdx, editMode, editDay, updEditDay, updateSet, resetPR, resetSetPR, toggleSkip, onOpenLink, t }) {
+export default function ExerciseCard({ ex, exIdx, editMode, editDay, updEditDay, updateSet, resetSetPR, toggleSkip, onOpenLink, t }) {
   const pr = ex.pr || [];
-  const hasBelowPR = !editMode && !ex.skipped && ex.sets.some((s, si) => pr[si] !== undefined && s.reps < pr[si]);
   const isSkipped = !!ex.skipped;
 
   return (
@@ -35,9 +34,6 @@ export default function ExerciseCard({ ex, exIdx, editMode, editDay, updEditDay,
         )}
         {!editMode && (
           <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-            {hasBelowPR && (
-              <button className="reset-pr-btn" onClick={() => resetPR(exIdx)}>Reset PR</button>
-            )}
             <button
               className={`skip-btn ${isSkipped ? 'skipped' : ''}`}
               onClick={() => toggleSkip(exIdx)}
