@@ -161,7 +161,12 @@ export function importCSV(file, data) {
             currentEx.pr.push(reps ?? 0);
           }
 
-          nd.days[di].exercises = nd.days[di].exercises.filter(ex => ex.sets.length > 0);
+          nd.days[di].exercises.forEach(ex => {
+            if (ex.sets.length === 0) {
+              ex.sets.push({ id: uid(), reps: 0, weight: 0 });
+              ex.pr.push(0);
+            }
+          });
         });
 
         resolve(nd);
