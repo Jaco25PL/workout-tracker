@@ -8,10 +8,10 @@ export default function MenuDrawer({ open, onClose, user, dark, onToggleDark, on
           <div className="menu-title">Workout Tracker</div>
           {user ? (
             <div className="menu-user" style={{ marginTop: 12 }}>
-              <div className="menu-avatar">{user.name[0].toUpperCase()}</div>
+              <div className="menu-avatar">{user.email[0].toUpperCase()}</div>
               <div>
-                <div className="menu-user-name">{user.name}</div>
-                <div className="menu-user-sub">{user.email}</div>
+                <div className="menu-user-name">{user.email}</div>
+                <div className="menu-user-sub">Synced</div>
               </div>
             </div>
           ) : (

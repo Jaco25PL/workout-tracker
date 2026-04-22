@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { uid } from './utils/uid';
-import { loadData, saveData } from './utils/storage';
+import { loadData, saveData, pullData, pushData } from './utils/storage';
+import { supabase } from './utils/supabase';
 import { exportCSV, importCSV } from './utils/csv';
 import Header from './components/Header';
 import DaySelector from './components/DaySelector';
@@ -15,27 +16,62 @@ import Toast from './components/Toast';
 export default function App() {
   const today = new Date().getDay();
   const [data, setData] = useState(loadData);
-  const [curDay, setCurDay] = useState(() => {
-    const s = localStorage.getItem('wt_day');
-    return s !== null ? parseInt(s) : today;
-  });
+  const [curDay, setCurDay] = useState(today);
   const [dark, setDark] = useState(() => localStorage.getItem('wt_dark') !== 'false');
   const [menuOpen, setMenuOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [editData, setEditData] = useState(null);
   const [loginOpen, setLoginOpen] = useState(false);
   const [linkModal, setLinkModal] = useState(null);
-  const [user, setUser] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('wt_user')); } catch (e) { return null; }
-  });
+  const [user, setUser] = useState(null);
   const [toast, setToast] = useState('');
   const [toastVis, setToastVis] = useState(false);
   const fileRef = useRef();
   const toastTmr = useRef();
+  const syncTmr = useRef();
+
+  // Auth state listener
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      if (session?.user) syncFromCloud(session.user.id);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      if (session?.user) syncFromCloud(session.user.id);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  // Pull from cloud on login
+  async function syncFromCloud(userId) {
+    try {
+      const cloud = await pullData(userId);
+      if (cloud) {
+        setData(cloud);
+        saveData(cloud);
+      } else {
+        // First login — push local data to cloud
+        await pushData(userId, data);
+      }
+    } catch (e) { console.error('Sync pull failed:', e); }
+  }
+
+  // Save locally + push to cloud (debounced)
+  const syncToCloud = useCallback((d) => {
+    saveData(d);
+    clearTimeout(syncTmr.current);
+    syncTmr.current = setTimeout(async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        try { await pushData(session.user.id, d); }
+        catch (e) { console.error('Sync push failed:', e); }
+      }
+    }, 1500);
+  }, []);
 
   useEffect(() => { document.body.classList.toggle('light', !dark); localStorage.setItem('wt_dark', dark); }, [dark]);
-  useEffect(() => { saveData(data); }, [data]);
-  useEffect(() => { localStorage.setItem('wt_day', curDay); }, [curDay]);
+  useEffect(() => { syncToCloud(data); }, [data, syncToCloud]);
 
   function showToast(msg) {
     clearTimeout(toastTmr.current);
@@ -109,20 +145,9 @@ export default function App() {
     setMenuOpen(false);
   }
 
-  function handleLogin(e) {
-    e.preventDefault();
-    const fd = new FormData(e.target);
-    const u = { name: fd.get('name') || 'Athlete', email: fd.get('email') };
-    setUser(u);
-    localStorage.setItem('wt_user', JSON.stringify(u));
-    setLoginOpen(false);
-    setMenuOpen(false);
-    showToast(`Welcome, ${u.name}`);
-  }
-
-  function handleLogout() {
+  async function handleLogout() {
+    await supabase.auth.signOut();
     setUser(null);
-    localStorage.removeItem('wt_user');
     setMenuOpen(false);
     showToast('Logged out');
   }
@@ -198,7 +223,7 @@ export default function App() {
         onLogout={handleLogout}
       />
 
-      {loginOpen && <LoginModal onClose={() => setLoginOpen(false)} onLogin={handleLogin} />}
+      {loginOpen && <LoginModal onClose={() => setLoginOpen(false)} onToast={showToast} />}
 
       {linkModal && (
         <LinkModal

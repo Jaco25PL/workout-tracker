@@ -151,10 +151,14 @@ export function importCSV(file, data) {
             if (!currentEx) continue;
 
             const reps = parseReps(rawReps);
-            if (reps === null) continue;
-            const wt = parseWeight(rawWeight);
-            currentEx.sets.push({ id: uid(), reps, weight: wt === null ? 0 : wt });
-            currentEx.pr.push(reps);
+            let wt = parseWeight(rawWeight);
+            if (wt === null && rawReps) {
+              const inParens = rawReps.match(/\(([^)]+)\)/);
+              if (inParens) wt = parseWeight(inParens[1]);
+            }
+            if (reps === null && wt === null) continue;
+            currentEx.sets.push({ id: uid(), reps: reps ?? 0, weight: wt === null ? 0 : wt });
+            currentEx.pr.push(reps ?? 0);
           }
 
           nd.days[di].exercises = nd.days[di].exercises.filter(ex => ex.sets.length > 0);

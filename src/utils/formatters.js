@@ -12,7 +12,7 @@ export function cleanName(s) {
 
 export function parseWeight(s) {
   if (s === undefined || s === null) return null;
-  const t = String(s).trim();
+  const t = String(s).trim().replace(',', '.');
   if (!t) return null;
   const matches = t.match(/-?\d+(?:\.\d+)?/g);
   if (!matches) return 0;
@@ -23,8 +23,9 @@ export function parseReps(s) {
   if (s === undefined || s === null) return null;
   const t = String(s).trim();
   if (!t) return null;
-  if (!/^-?\d+$/.test(t)) return null;
-  return parseInt(t, 10);
+  const m = t.match(/^(\d+)/);
+  if (!m) return null;
+  return parseInt(m[1], 10);
 }
 
 export function shouldSkipExercise(name) {
