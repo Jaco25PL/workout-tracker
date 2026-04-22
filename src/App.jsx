@@ -11,6 +11,7 @@ import EmptyState from './components/EmptyState';
 import ExerciseCard from './components/ExerciseCard';
 import MenuDrawer from './components/MenuDrawer';
 import LoginModal from './components/LoginModal';
+import NewPasswordModal from './components/NewPasswordModal';
 import LinkModal from './components/LinkModal';
 import Toast from './components/Toast';
 import CatPopup from './components/CatPopup';
@@ -31,6 +32,7 @@ export default function App() {
   const [toast, setToast] = useState('');
   const [toastVis, setToastVis] = useState(false);
   const [catAnim, setCatAnim] = useState(null);
+  const [newPasswordOpen, setNewPasswordOpen] = useState(false);
   const fileRef = useRef();
   const toastTmr = useRef();
   const syncTmr = useRef();
@@ -49,6 +51,9 @@ export default function App() {
         if (event === 'SIGNED_IN') {
           const name = session.user.user_metadata?.name || session.user.email.split('@')[0];
           showToast(T[localStorage.getItem('wt_lang') || 'en'].welcomeMsg(name));
+        }
+        if (event === 'PASSWORD_RECOVERY') {
+          setNewPasswordOpen(true);
         }
       }
     });
@@ -264,6 +269,7 @@ export default function App() {
       />
 
       {loginOpen && <LoginModal onClose={() => setLoginOpen(false)} onToast={showToast} t={t} />}
+      {newPasswordOpen && <NewPasswordModal onClose={() => setNewPasswordOpen(false)} onToast={showToast} t={t} />}
 
       {linkModal && (
         <LinkModal
