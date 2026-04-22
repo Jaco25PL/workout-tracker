@@ -42,9 +42,15 @@ export default function App() {
       setUser(session?.user ?? null);
       if (session?.user) syncFromCloud(session.user.id);
     });
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
-      if (session?.user) syncFromCloud(session.user.id);
+      if (session?.user) {
+        syncFromCloud(session.user.id);
+        if (event === 'SIGNED_IN') {
+          const name = session.user.user_metadata?.name || session.user.email.split('@')[0];
+          showToast(T[localStorage.getItem('wt_lang') || 'en'].welcomeMsg(name));
+        }
+      }
     });
     return () => subscription.unsubscribe();
   }, []);

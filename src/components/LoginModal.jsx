@@ -23,7 +23,8 @@ export default function LoginModal({ onClose, onToast, t }) {
     const email = fd.get('email');
     const password = fd.get('password');
     setLoading(true);
-    const { error } = await supabase.auth.signUp({ email, password });
+    const name = fd.get('name');
+    const { error } = await supabase.auth.signUp({ email, password, options: { data: { name } } });
     setLoading(false);
     if (error) { onToast('Error: ' + error.message); return; }
     onToast(t.checkEmail);
@@ -88,6 +89,7 @@ export default function LoginModal({ onClose, onToast, t }) {
               </form>
             ) : (
               <form onSubmit={handleSignUp} key="signup">
+                <input className="modal-input" name="name" placeholder={t.yourName} required autoComplete="name" />
                 <input className="modal-input" name="email" type="email" placeholder={t.email} required autoComplete="email" />
                 <input className="modal-input" name="password" type="password" placeholder={t.password} required autoComplete="new-password" minLength={6} />
                 <button className="modal-btn" type="submit" disabled={loading}>
