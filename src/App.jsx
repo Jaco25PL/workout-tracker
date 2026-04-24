@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { uid } from './utils/uid';
+import { DEFAULT_DATA } from './constants';
 import { loadData, saveData, pullData, pushData } from './utils/storage';
 import { supabase } from './utils/supabase';
 import { exportCSV, importCSV } from './utils/csv';
@@ -176,6 +177,9 @@ export default function App() {
 
   async function handleLogout() {
     await supabase.auth.signOut();
+    const blank = JSON.parse(JSON.stringify(DEFAULT_DATA));
+    setData(blank);
+    saveData(blank);
     setUser(null);
     setMenuOpen(false);
     showToast(t.loggedOut);
