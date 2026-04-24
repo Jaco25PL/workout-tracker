@@ -1,4 +1,4 @@
-export default function MenuDrawer({ open, onClose, user, dark, lang, t, onToggleDark, onToggleLang, onEdit, onImport, onExport, onLogin, onLogout }) {
+export default function MenuDrawer({ open, onClose, user, dark, lang, t, onToggleDark, onToggleLang, onEdit, onImport, onExport, onLogin, onLogout, userWeight, onWeightChange }) {
   return (
     <>
       <div className={`menu-overlay ${open ? 'open' : ''}`} onClick={onClose} />
@@ -36,6 +36,16 @@ export default function MenuDrawer({ open, onClose, user, dark, lang, t, onToggl
               <div className="menu-item-sub">{t.langSub}</div>
             </div>
             <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-dim)', background: 'var(--surface2)', borderRadius: 6, padding: '3px 8px' }}>{lang === 'en' ? 'EN' : 'ES'}</div>
+          </div>
+
+          <div className="menu-divider" />
+          <div className="menu-section-label">{t.bodyWeight}</div>
+          <div className="weight-row">
+            <div className="weight-input-wrap">
+              <span style={{ fontSize: 20 }}>{'\u2696\ufe0f'}</span>
+              <input className="weight-input" type="number" inputMode="decimal" placeholder="—" value={userWeight} onChange={e => onWeightChange(e.target.value)} min="0" step="0.1" />
+              <span className="weight-unit">kg</span>
+            </div>
           </div>
 
           <div className="menu-divider" />

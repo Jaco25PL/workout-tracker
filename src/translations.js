@@ -38,6 +38,8 @@ export const T = {
     continueWithGoogle: 'Continue with Google',
     orDivider: 'or',
     loading: 'Loading...',
+    sw: 'Stopwatch', lap: 'Lap', reset: 'Reset', start: 'Start', stop: 'Stop',
+    bodyWeight: 'Body Weight', bodyWeightSub: 'Log your weight',
   },
   es: {
     days: ['D', 'L', 'M', 'X', 'J', 'V', 'S'],
@@ -78,5 +80,7 @@ export const T = {
     continueWithGoogle: 'Continuar con Google',
     orDivider: 'o',
     loading: 'Cargando...',
+    sw: 'Cronómetro', lap: 'Vuelta', reset: 'Reiniciar', start: 'Iniciar', stop: 'Parar',
+    bodyWeight: 'Peso corporal', bodyWeightSub: 'Registra tu peso',
   }
 };

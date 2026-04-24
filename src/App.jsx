@@ -16,6 +16,7 @@ import NewPasswordModal from './components/NewPasswordModal';
 import LinkModal from './components/LinkModal';
 import Toast from './components/Toast';
 import CatPopup from './components/CatPopup';
+import Stopwatch from './components/Stopwatch';
 
 export default function App() {
   const today = new Date().getDay();
@@ -34,6 +35,7 @@ export default function App() {
   const [toastVis, setToastVis] = useState(false);
   const [catAnim, setCatAnim] = useState(null);
   const [newPasswordOpen, setNewPasswordOpen] = useState(false);
+  const [userWeight, setUserWeight] = useState(() => localStorage.getItem('wt_weight') || '');
   const fileRef = useRef();
   const toastTmr = useRef();
   const syncTmr = useRef();
@@ -92,6 +94,7 @@ export default function App() {
 
   useEffect(() => { document.body.classList.toggle('light', !dark); localStorage.setItem('wt_dark', dark); }, [dark]);
   useEffect(() => { localStorage.setItem('wt_lang', lang); }, [lang]);
+  useEffect(() => { localStorage.setItem('wt_weight', userWeight); }, [userWeight]);
   useEffect(() => { syncToCloud(data); }, [data, syncToCloud]);
 
   function showToast(msg) {
@@ -187,6 +190,7 @@ export default function App() {
 
   return (
     <div className="app">
+      <Stopwatch t={t} />
       <Header
         viewDay={viewDay}
         editMode={editMode}
@@ -260,6 +264,8 @@ export default function App() {
         onExport={handleExport}
         onLogin={() => setLoginOpen(true)}
         onLogout={handleLogout}
+        userWeight={userWeight}
+        onWeightChange={setUserWeight}
       />
 
       {loginOpen && <LoginModal onClose={() => setLoginOpen(false)} onToast={showToast} t={t} />}

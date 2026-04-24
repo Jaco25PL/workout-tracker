@@ -11,6 +11,8 @@
   --green: oklch(0.72 0.18 145);
   --red: oklch(0.68 0.22 25);
   --red-dim: oklch(0.68 0.22 25 / 0.14);
+  --island-bg: #111;
+  --island-text: #f0f0f0;
 }
 
 body.light {
@@ -26,4 +28,6 @@ body.light {
   --green: oklch(0.52 0.18 145);
   --red: oklch(0.52 0.25 25);
   --red-dim: oklch(0.52 0.25 25 / 0.12);
+  --island-bg: #1a0a14;
+  --island-text: #fff;
 }

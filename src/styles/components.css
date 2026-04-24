@@ -8,8 +8,36 @@
   overflow: hidden;
 }
 
+/* Dynamic Island Stopwatch */
+.island-wrap { position: fixed; top: 10px; left: 50%; transform: translateX(-50%); z-index: 500; pointer-events: none; display: flex; justify-content: center; width: 100%; max-width: 430px; }
+.island { background: var(--island-bg); pointer-events: all; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+.island.collapsed { padding: 0 16px; cursor: pointer; border-radius: 50px; }
+.island.expanded { padding: 16px 18px 18px; border-radius: 28px; }
+
+/* Collapsed inner content */
+.island-collapsed-content { display: flex; align-items: center; justify-content: center; gap: 8px; height: 36px; white-space: nowrap; }
+
+.island-dot { width: 8px; height: 8px; border-radius: 50%; background: #333; flex-shrink: 0; transition: background 0.2s; }
+.island-dot.active { background: #30d158; animation: dotPulse 1.5s ease infinite; }
+@keyframes dotPulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.island-time-small { font-size: 15px; font-weight: 700; color: var(--island-text); font-variant-numeric: tabular-nums; letter-spacing: 0.02em; }
+.island-label { font-size: 12px; color: #777; font-weight: 600; letter-spacing: 0.04em; }
+.island-top-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
+.island-section-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #666; }
+.island-close { background: none; border: none; color: #555; font-size: 20px; cursor: pointer; line-height: 1; padding: 0 0 0 4px; }
+.island-expanded-time { font-size: 56px; font-weight: 200; color: var(--island-text); font-variant-numeric: tabular-nums; letter-spacing: -2px; text-align: center; margin: 8px 0 16px; line-height: 1; font-family: -apple-system, 'SF Pro Display', 'Helvetica Neue', sans-serif; }
+.island-btns { display: flex; gap: 12px; justify-content: space-between; }
+.island-btn { flex: 1; padding: 12px 0; border-radius: 100px; border: none; font-size: 14px; font-weight: 600; cursor: pointer; transition: opacity 0.12s; font-family: inherit; }
+.island-btn:disabled { opacity: 0.35; cursor: default; }
+.island-btn.go { background: #0a3a1a; color: #30d158; }
+.island-btn.stop { background: #3a1218; color: #ff453a; }
+.island-btn.rst { background: #333; color: #fff; }
+.island-btn.lap { background: #333; color: #fff; }
+.island-laps { margin-top: 10px; max-height: 72px; overflow-y: auto; }
+.island-lap { display: flex; justify-content: space-between; font-size: 12px; color: #888; padding: 4px 0; border-top: 1px solid #2a2a2a; font-variant-numeric: tabular-nums; }
+
 /* Header */
-.header { padding: 52px 20px 0; }
+.header { padding: 60px 20px 0; }
 .header-top { display: flex; align-items: flex-start; justify-content: space-between; }
 .header-left { display: flex; flex-direction: column; gap: 2px; }
 .cat-label { font-size: 38px; font-weight: 700; letter-spacing: -1.5px; color: var(--text); line-height: 1; min-height: 46px; }
@@ -101,6 +129,10 @@ body.light .exercise-card.skipped { box-shadow: 0 0 0 1px oklch(0.52 0.25 25 / 0
 .menu-bottom { padding: 16px 24px 40px; border-top: 1px solid var(--border); }
 .menu-logout-btn { width: 100%; padding: 12px; border-radius: 12px; background: var(--red-dim); border: 1px solid oklch(0.68 0.22 25 / 0.2); color: var(--red); font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.15s; }
 .menu-logout-btn:hover { background: oklch(0.68 0.22 25 / 0.22); }
+.weight-row { padding: 0 24px 8px; }
+.weight-input-wrap { display: flex; align-items: center; gap: 10px; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px; }
+.weight-input { background: transparent; border: none; color: var(--text); font-size: 18px; font-weight: 700; width: 70px; outline: none; font-family: inherit; }
+.weight-unit { font-size: 13px; color: var(--text-dim); font-weight: 600; }
 
 /* Edit mode */
 .edit-name-row { display: flex; align-items: center; gap: 8px; padding: 12px 16px 8px; }
