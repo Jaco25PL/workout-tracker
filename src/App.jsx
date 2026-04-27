@@ -91,6 +91,7 @@ export default function App() {
     }, 1500);
   }, []);
 
+  useEffect(() => { document.body.style.overflow = menuOpen ? 'hidden' : ''; return () => { document.body.style.overflow = ''; }; }, [menuOpen]);
   useEffect(() => { document.body.classList.toggle('light', !dark); localStorage.setItem('wt_dark', dark); }, [dark]);
   useEffect(() => { localStorage.setItem('wt_lang', lang); }, [lang]);
   useEffect(() => { syncToCloud(data); }, [data, syncToCloud]);
@@ -188,7 +189,7 @@ export default function App() {
 
   return (
     <div className="app">
-      <Stopwatch t={t} />
+      {!editMode && <Stopwatch t={t} />}
       <Header
         viewDay={viewDay}
         editMode={editMode}
@@ -200,6 +201,13 @@ export default function App() {
         t={t}
         curDay={curDay}
       />
+
+      {editMode && (
+        <div className="edit-sticky-wrap">
+          <button className="edit-sticky-cancel" onClick={cancelEdit}>{t.cancel}</button>
+          <button className="edit-sticky-save" onClick={saveEdit}>{t.save}</button>
+        </div>
+      )}
 
       <DaySelector curDay={curDay} setCurDay={setCurDay} viewData={viewData} t={t} />
 
