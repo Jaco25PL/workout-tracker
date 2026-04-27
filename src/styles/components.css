@@ -148,7 +148,7 @@ body.light .exercise-card.skipped { box-shadow: 0 0 0 1px oklch(0.52 0.25 25 / 0
 .link-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
 .link-btn.has-link { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
 .link-url-row { padding: 2px 16px 0; font-size: 11px; color: var(--text-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.exercise-name-link { color: var(--accent); cursor: pointer; text-decoration: none; border-bottom: 1px dashed var(--accent); padding-bottom: 1px; }
+.exercise-name-link { color: var(--text); cursor: pointer; text-decoration: underline; text-decoration-style: dashed; text-decoration-color: var(--text-dim); text-underline-offset: 3px; text-decoration-thickness: 1px; }
 .exercise-name-link:hover { opacity: 0.85; }
 .edit-set-row { display: grid; grid-template-columns: 28px 1fr 1fr 28px; gap: 8px; align-items: center; padding: 6px 16px; border-top: 1px solid var(--border); }
 .del-btn { width: 24px; height: 24px; border-radius: 50%; background: var(--red-dim); border: none; color: var(--red); font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.1s; line-height: 1; }
