@@ -189,7 +189,7 @@ export default function App() {
 
   return (
     <div className="app">
-      {!editMode && <Stopwatch t={t} />}
+      <Stopwatch t={t} hidden={editMode} />
       <Header
         viewDay={viewDay}
         editMode={editMode}

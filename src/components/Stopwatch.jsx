@@ -1,22 +1,48 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
-export default function Stopwatch({ t }) {
+function loadSW() {
+  try {
+    const s = localStorage.getItem('wt_sw');
+    if (s) return JSON.parse(s);
+  } catch (e) { /* ignore */ }
+  return null;
+}
+
+function saveSW(running, base, startedAt, laps) {
+  try {
+    localStorage.setItem('wt_sw', JSON.stringify({ running, base, startedAt, laps }));
+  } catch (e) { /* ignore */ }
+}
+
+function clearSW() {
+  try { localStorage.removeItem('wt_sw'); } catch (e) { /* ignore */ }
+}
+
+export default function Stopwatch({ t, hidden }) {
+  const saved = useRef(loadSW());
   const [open, setOpen] = useState(false);
-  const [running, setRunning] = useState(false);
-  const [ms, setMs] = useState(0);
-  const [laps, setLaps] = useState([]);
-  const startRef = useRef(0);
-  const baseRef = useRef(0);
+  const [running, setRunning] = useState(() => saved.current?.running || false);
+  const [ms, setMs] = useState(() => {
+    const s = saved.current;
+    if (!s) return 0;
+    if (s.running) return s.base + (Date.now() - s.startedAt);
+    return s.base;
+  });
+  const [laps, setLaps] = useState(() => saved.current?.laps || []);
+  const startRef = useRef(saved.current?.running ? saved.current.startedAt : 0);
+  const baseRef = useRef(saved.current?.base || 0);
   const intRef = useRef();
 
   useEffect(() => {
     if (running) {
-      startRef.current = Date.now();
+      startRef.current = startRef.current || Date.now();
       intRef.current = setInterval(() => setMs(baseRef.current + Date.now() - startRef.current), 40);
+      saveSW(true, baseRef.current, startRef.current, laps);
     } else {
       clearInterval(intRef.current);
       baseRef.current = ms;
+      if (ms > 0) saveSW(false, baseRef.current, 0, laps);
     }
     return () => clearInterval(intRef.current);
   }, [running]);
@@ -26,11 +52,34 @@ export default function Stopwatch({ t }) {
     return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')},${String(c).padStart(2, '0')}`;
   }
 
-  function handleReset() { setRunning(false); setMs(0); baseRef.current = 0; setLaps([]); }
-  function handleLap() { setLaps(p => [{ n: p.length + 1, v: ms }, ...p]); }
+  function handleReset() {
+    setRunning(false); setMs(0); baseRef.current = 0; startRef.current = 0; setLaps([]);
+    clearSW();
+  }
+
+  function handleLap() {
+    setLaps(p => {
+      const next = [{ n: p.length + 1, v: ms }, ...p];
+      saveSW(running, baseRef.current, startRef.current, next);
+      return next;
+    });
+  }
+
+  function handleToggle() {
+    setRunning(r => {
+      if (r) {
+        // stopping
+        return false;
+      } else {
+        // starting
+        startRef.current = Date.now();
+        return true;
+      }
+    });
+  }
 
   return (
-    <div className="island-wrap">
+    <div className="island-wrap" style={hidden ? { display: 'none' } : undefined}>
       <motion.div
         className={`island ${open ? 'expanded' : 'collapsed'}`}
         layout
@@ -74,7 +123,7 @@ export default function Stopwatch({ t }) {
                 ? <button className="island-btn rst" onClick={handleReset}>{t.reset}</button>
                 : <button className="island-btn lap" disabled={!running} onClick={handleLap}>{t.lap}</button>
               }
-              <button className={`island-btn ${running ? 'stop' : 'go'}`} onClick={() => setRunning(r => !r)}>
+              <button className={`island-btn ${running ? 'stop' : 'go'}`} onClick={handleToggle}>
                 {running ? (t.stop || 'Stop') : t.start}
               </button>
             </div>
